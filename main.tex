@@ -48,9 +48,9 @@
           (\forall i: \ent)(0 \leq i < |res| \implicaLuego (\exists j: \ent)(\exists k: \ent)((0 \leq j < |menoresDeCiudad| \; \wedge \; 0 \leq k < |mayoresDeCiudad|) \; \yLuego \\ siCoincidenNombresSumoHabitantes(res, menoresDeCiudades, mayoresDeCiudades, i, j, k))}
 \end{proc}
 
-\pred{mismosNombres}{\In s: \TLista{Ciudades}, \In t: \TLista{Ciudades}}{(\forall i: \ent) (0 \leq i < |s| \implicaLuego (\exists j: \ent) (0 \leq j < |t| \yLuego s[i].nombre = t[j].nombre))}
+\pred{mismosNombres}{\In s: \TLista{Ciudad}, \In t: \TLista{Ciudad}}{(\forall i: \ent) (0 \leq i < |s| \implicaLuego (\exists j: \ent) (0 \leq j < |t| \yLuego s[i].nombre = t[j].nombre))}
 
-\pred{siCoincidenNombresSumoHabitantes}{\In s: \TLista{Ciudades}, \In t: \TLista{Ciudades}, \In r: \TLista{Ciudades}, \In i: \ent, \In j: \ent, \In k: \ent}{(s[i].nombre = t[j].nombre \; \wedge \;  s[i].nombre = r[k].nombre) \longrightarrow  s[i].habitantes = t[j].habitantes + r[k].habitantes}
+\pred{siCoincidenNombresSumoHabitantes}{\In s: \TLista{Ciudad}, \In t: \TLista{Ciudad}, \In r: \TLista{Ciudad}, \In i: \ent, \In j: \ent, \In k: \ent}{(s[i].nombre = t[j].nombre \; \wedge \;  s[i].nombre = r[k].nombre) \longrightarrow  s[i].habitantes = t[j].habitantes + r[k].habitantes}
 
 
 \subsection{hayCamino}

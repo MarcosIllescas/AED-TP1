@@ -2,6 +2,14 @@
 
 \input{AEDmacros}
 \usepackage{caratula} % Version modificada para usar las macros de algo1 de ~> https://github.com/bcardiff/dc-tex
+\usepackage{titlesec}
+
+\setcounter{secnumdepth}{4}
+
+\titleformat{\paragraph}
+{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}
+{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
 
 \titulo{Trabajo práctico 1}
 \subtitulo{Especificación y WP}
@@ -45,7 +53,7 @@
 	\requiere{|menoresDeCiudades| = |mayoresDeCiudades| \; \; \wedge \; \; \\
           mismosNombres(menoresDeCiudades, mayoresDeCiudades)} 
 	\asegura{|res| = |menoresDeCiudades| \; \wedge \\
-          (\forall i: \ent)(0 \leq i < |res| \implicaLuego (\exists j: \ent)(\exists k: \ent)((0 \leq j < |menoresDeCiudad| \; \wedge \; 0 \leq k < |mayoresDeCiudad|) \; \yLuego \\ siCoincidenNombresSumoHabitantes(res, menoresDeCiudades, mayoresDeCiudades, i, j, k))}
+          (\forall i: \ent)(0 \leq i < |res| \implicaLuego (\exists j: \ent)(\exists k: \ent)(0 \leq j < k < |menoresDeCiudad| \; \yLuego \\ siCoincidenNombresSumoHabitantes(res, menoresDeCiudades, mayoresDeCiudades, i, j, k))}
 \end{proc}
 
 \pred{mismosNombres}{\In s: \TLista{Ciudad}, \In t: \TLista{Ciudad}}{(\forall i: \ent) (0 \leq i < |s| \implicaLuego (\exists j: \ent) (0 \leq j < |t| \yLuego s[i].nombre = t[j].nombre))}
@@ -83,6 +91,52 @@
 \section{Demostraciones de correctitud}
 
 \subsection{Demostrar que la implementación es correcta con respecto a la especificación.}
+
+
+\begin{proc}
+{poblacionTotal}{\In ciudades: \TLista{Ciudad}}{\ent}
+\requiere{(\exists j: \ent)(0 \leq j < |ciudades| \yLuego ciudades[j].habitantes > 50000) \wedge \\
+(\forall k: \ent)(0 \leq k < |ciudades| \implicaLuego ciudades[i].habitantes \geq 0) \wedge \\
+(\forall m: \ent)(\forall n: \ent)(0 \leq m < n < |ciudades| \implicaLuego ciudades[m].nombre \neq ciudades[n].nombre)
+}
+\asegura{res = \sum_{i=0}^{|ciudades|-1} ciudades[i].habitantes}    
+\end{proc}
+
+
+$ \\
+res = 0 \\
+i = 0 \\
+while \; (i < ciudades.length) \; do  \par
+     res = res + ciudades.[i].habitantes \par
+     i = i + 1 \\
+endwhile  \\   $
+\\
+
+P \equiv {A \wedge B \wedge C} \par
+A \equiv {(\exists j: \ent)(0 \leq j < |ciudades| \yLuego ciudades[j].habitantes > 50000)} \par
+B \equiv {(\forall k: \ent)(0 \leq k < |ciudades| \implicaLuego ciudades[i].habitantes \geq 0)} \par
+C \equiv {(\forall m: \ent)(\forall n: \ent)(0 \leq m < n < |ciudades| \implicaLuego ciudades[m].nombre \neq ciudades[n].nombre)}
+\\ \\
+Pc \equiv {res = 0 \; \wedge i = 0 \; \wedge A \wedge B \wedge C} 
+\\ \\
+B \equiv {i < |ciudades|}
+\\ \\
+I \equiv{0 \leq i \leq |ciudades| \yLuego res = \sum_{j=0}^{i-1} ciudades[j].habitantes}
+\\ \\
+Q \equiv{Qc \equiv{res = \sum_{i=0}^{|ciudades|-1} ciudades[i].habitantes}}
+
+
+\subsubsection{Pc \implies I}
+Pc \equiv {res = 0 \; \wedge i = 0 \; \wedge A \wedge B \wedge C} \implies 0 \leq 0  \leq |ciudades| \yLuego 0 = \sum_{j=0}^{-1} ciudades[j].habitantes \equiv \par 
+\vspace{5px}
+{\centering 0 \leq |ciudades| \yLuego 0 = 0 \\
+\vspace{5px}
+True \yLuego \; $True$ \\
+\vspace{5px}
+True \\
+\vspace{5px}
+ Pc \implies I\par}
+
 
 \subsection{Demostrar que el valor devuelto es mayor a 50.000.}
 

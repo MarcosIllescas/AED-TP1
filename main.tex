@@ -126,29 +126,28 @@ while \; (i  \textless \; ciudades.length) \; do  \par \par
 endwhile    $
 \\ \\
 
-P \equiv {A \wedge B \wedge C}
+$P \equiv A \wedge B \wedge C$
 
-A \equiv {(\exists j: \ent)(0 \leq j < |ciudades| \yLuego ciudades[j].habitantes > 50000)} \par
-B \equiv {(\forall k: \ent)(0 \leq k < |ciudades| \implicaLuego ciudades[i].habitantes \geq 0)} \par
-C \equiv {(\forall m: \ent)(\forall n: \ent)(0 \leq m < n < |ciudades| \implicaLuego ciudades[m].nombre \neq ciudades[n].nombre)}
-\\ \\
+$A \equiv (\exists l: \ent)(0 \leq l < |ciudades| \yLuego ciudades[l].habitantes > 50000)$ \par
+$B \equiv (\forall k: \ent)(0 \leq k < |ciudades| \implicaLuego ciudades[k].habitantes \geq 0)$ \par
+$C \equiv (\forall m: \ent)(\forall n: \ent)(0 \leq m < n < |ciudades| \implicaLuego ciudades[m].nombre \neq ciudades[n].nombre)$
+\\ \par
+$Pc \equiv res = 0 \; \wedge i = 0 \; \wedge A \wedge B \wedge C$
+\\ \par
 
-Pc \equiv {res = 0 \; \wedge i = 0 \; \wedge A \wedge B \wedge C} 
-\\ \\
+$B \equiv i < |ciudades|$
+\\ \par
 
-B \equiv {i < |ciudades|}
-\\ \\
+$I \equiv 0 \leq i \leq |ciudades| \yLuego res = \sum_{j=0}^{i-1} ciudades[j].habitantes$
+\\ \par
 
-I \equiv{0 \leq i \leq |ciudades| \yLuego res = \sum_{j=0}^{i-1} ciudades[j].habitantes}
-\\ \\
-
-f_{v} \equiv |ciudades| - i
-\\ \\
+$f_{v} \equiv |ciudades| - i$
+\\ \par
 
 Como el programa finaliza al terminar el ciclo, podemos asumir que: \par
 \vspace{5px}
 
-Q \equiv{Qc \equiv{res = \sum_{i=0}^{|ciudades|-1} ciudades[i].habitantes}}
+$Q \equivQc \equiv res = \sum_{j=0}^{|ciudades|-1} ciudades[j].habitantes$
 \\
 
 Para demostrar la correctitud del programa basta ver que son válidas las siguientes triplas de Hoare: \par
@@ -273,6 +272,12 @@ $P \equiv A \wedge B \wedge C \implies A \wedge B \wedge C \equiv True \wedge Tr
     $P \implies wp(S_{1};S_{2}, Pc)$
 \end{center}
 El programa es correcto con respecto a su especificación.
-\subsection{Demostrar que el valor devuelto es mayor a 50.000.}
 
+\subsection{Demostrar que el valor devuelto es mayor a 50.000.}
+Para demostrar que el valor devuelto es mayor a 50.000, cambiamos la Postcondición Q del programa acordemente y vemos si el programa sigue siendo correcto con respecto a su especificación.
+
+Consideramos $P, B, Pc, f_{v}$ igual que en el punto anterior, y \\ \par
+$Q \equiv Qc \equiv res = \sum_{j=0}^{|ciudades|-1} ciudades[j].habitantes \wedge res > 50000$ \\ \par
+$A \equiv (\exists l: \ent)(0 \leq l < |ciudades| \yLuego ciudades[l].habitantes > 50000)$\\ \par
+$I \equiv 0 \leq i \leq |ciudades| \yLuego res = \sum_{j=0}^{i-1} ciudades[j].habitantes \wedge A$
 \end{document}

@@ -82,10 +82,11 @@
 
 \subsection{cantidadCaminosNSaltos}
 
-\begin{proc}{cantidadCaminosNSaltos}{\In conexion : \TLista{\TLista{\ent}}, \In n : \ent}{\TLista{\ent}}
+\begin{proc}{cantidadCaminosNSaltos}{\Inout conexion : \TLista{\TLista{\ent}}, \In n : \ent}
 	\requiere{n \geq 1 \land conexion = C_0}
-	\asegura{conexion = {C_0}^n}
+	\asegura{(\forall i: \ent)(0 \leq i < \longitud{C_0} \implicaLuego (\forall j: \ent)(0 \leq j < \longitud{C_0} \implicaLuego (\forall k: \ent)(0 \leq k < \longitud{C_0} \implicaLuego conexion[i][j] = {\sum_{i=0}^{|camino|-2} ({C_0}[i][k]{C_0}[j][k])^n)) \yLuego longitud{C_0[i]} = longitud{conexion[i]})}
 \end{proc}
+        \asegura{longitud{conexion} = longitud{C_0}}
 
 \subsection{caminoMínimo}
 

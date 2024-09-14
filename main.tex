@@ -43,9 +43,6 @@
 (\forall i: \ent)(\forall j: \ent)(0 \leq i < j < |s| \implicaLuego s[i].nombre \neq s[j].nombre)
 }
 
-\pred{caminoValido}{\In t: \TLista{\ent}, A: \TLista{\TLista{\ent}}}{
-|t| \geq 2 \wedge (\forall i: \ent)(0 \leq i < |t| \implicaLuego 0 \leq t[i] < |A|)
-}
 
 \pred{matrizCuadrada}{\In s: \TLista{\TLista{\ent}}}{
 (\forall i: \ent)(0 \leq i < |s| \implicaLuego |s| = |s[i]|)

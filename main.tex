@@ -3,6 +3,7 @@
 \input{AEDmacros}
 \usepackage{caratula} % Version modificada para usar las macros de algo1 de ~> https://github.com/bcardiff/dc-tex
 \usepackage{titlesec}
+\usepackage{array,amsmath}
 
 \setcounter{secnumdepth}{4}
 
@@ -95,12 +96,6 @@
 
 \begin{proc}{cantidadCaminosNSaltos}{\Inout conexion: \TLista{\TLista{\ent}}, \In n: \ent}{}
 	\requiere{n \geq 1 \wedge matrizCuadrada(conexion) \wedge \\ matrizPositivaSimetricaConCerosDiagonal(conexion) \wedge unosYceros(conexion) \wedge conexion = C_0}
-	\asegura{(\forall i: \ent)(0 \leq i < \longitud{C_0} \implicaLuego (\forall j: \ent)(0 \leq j < \longitud{C_0} \implicaLuego (\forall k: \ent)(0 \leq k < \longitud{C_0} \implicaLuego conexion[i][j] = \prod_{i=0}^{n -1} {C_0}[i][j]*{\sum_{i=0}^{longitud{C_0} -1} ({C_0}[i][k]*{C_0}[j][k]))) \yLuego longitud{C_0[i]} = longitud{conexion[i]})}}
-        \asegura{longitud{conexion} = longitud{C_0}}
-\end{proc}
-
-\begin{proc}{cantidadCaminosNSaltos}{\Inout conexion: \TLista{\TLista{\ent}}, \In n: \ent}{}
-	\requiere{n \geq 1 \wedge matrizCuadrada(conexion) \wedge \\ matrizPositivaSimetricaConCerosDiagonal(conexion) \wedge unosYceros(conexion) \wedge conexion = C_0}
 \asegura{(\exists s: \TLista{\TLista{\TLista{\ent}}})(|s| = n \wedge  s[0] = C_0 \wedge \\
 (\forall i: \ent)(0 \leq i < n \implicaLuego matrizCuadrada(s[i]) \wedge matrizPositivaSimetricaConCerosDiagonal(s[i])) \wedge \\
 (\forall j: \ent)(1 \leq j < n \implicaLuego esMultiplicacionMatricialDe(s[j], s[j-1], C_0)) \wedge conexion = s[n-1])}
@@ -142,14 +137,14 @@
 
 $ \\
 
-S_{1}: res = 0 
+S_{1}: res := 0 
 
-S_{2}: i = 0 
+S_{2}: i := 0 
 
 while \; (i  \textless \; ciudades.length) \; do  \par \par
-         S_{3}: res = res + ciudades.[i].habitantes \par
+         S_{3}: res := res + ciudades.[i].habitantes \par
      
-         S_{4}: i = i + 1 
+         S_{4}: i := i + 1 
      
 endwhile    $
 \\ \\
@@ -172,17 +167,19 @@ $I \equiv 0 \leq i \leq |ciudades| \yLuego res = \sum_{j=0}^{i-1} ciudades[j].ha
 $f_{v} \equiv |ciudades| - i$
 \\ \par
 
-Como el programa finaliza al terminar el ciclo, podemos asumir que: \par
+Como la última instrucción del programa es el ciclo, podemos asumir que \par
 \vspace{5px}
 
-$Q \equivQc \equiv res = \sum_{j=0}^{|ciudades|-1} ciudades[j].habitantes$
+$Q \equiv Qc \equiv res = \sum_{j=0}^{|ciudades|-1} ciudades[j].habitantes$
 \\
 
 Para demostrar la correctitud del programa basta ver que son válidas las siguientes triplas de Hoare: \par
 \vspace{5px}
 
-{ \{Pc\} S_{3};S_{4} \{Qc \equiv{Q}\} \; y \; \{P\} S_{1};S_{2} \{Pc\}}
-\vspace{5px}
+\begin{center}
+   ${ \{Pc\} S_{c} \{Qc \equiv{Q}\} \; y \; \{P\} S_{1};S_{2} \{Pc\}}$
+\vspace{5px} 
+\end{center}
 
 
 \subsubsection{$Pc \implies wp(S_{3};S_{4},Qc)$ (Teorema del Invariante y Terminación)}
@@ -314,7 +311,7 @@ Para demostrar la correctitud del programa basta ver que son válidas las siguie
 \vspace{5px}
 
 \begin{center}
-   ${ \{Pc\} S_{3};S_{4} \{Qc \equiv{Q}\} \; y \; \{P\} S_{1};S_{2} \{Pc\}}$
+   ${ \{Pc\} S_{c} \{Qc \equiv{Q}\} \; y \; \{P\} S_{1};S_{2} \{Pc\}}$
 \vspace{5px} 
 \end{center}
 

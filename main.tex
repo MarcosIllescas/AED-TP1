@@ -19,7 +19,7 @@
 \materia{Algoritmos y Estructura de Datos}
 \grupo{SinGrupo4}
 
-\integrante{Algañaraz, Franco}{001/01}{francoarga10@gmail.com}
+\integrante{Algañaraz, Franco}{1092/22}{francoarga10@gmail.com}
 \integrante{Illescas, Marcos}{390/14}{marcosillescas90@gmail.com}
 \integrante{Bahamonde, Matias}{694/21}{matubaham@gmail.com}
 \integrante {Marión, Ian Pablo}{004/01}{ianfrodin@gmail.com}
@@ -41,6 +41,22 @@
 
 \pred{noCiudadesRepetidas}{\In s: \TLista{Ciudad}}{
 (\forall i: \ent)(\forall j: \ent)(0 \leq i < j < |s| \implicaLuego s[i].nombre \neq s[j].nombre)
+}
+
+\pred{caminoValido}{\In t: \TLista{\ent}, A: \TLista{\TLista{\ent}}}{
+|t| \geq 2 \wedge (\forall i: \ent)(0 \leq i < |t| \implicaLuego 0 \leq t[i] < |A|)
+}
+
+\pred{matrizCuadrada}{\In s: \TLista{\TLista{\ent}}}{
+(\forall i: \ent)(0 \leq i < |s| \implicaLuego |s| = |s[i]|)
+}
+
+\pred{matrizPositivaSimetricaConCerosDiagonal}{\In s: \TLista{\TLista{\ent}}}{
+(\forall i: \ent)(\forall j: \ent)(0 \leq i < j < |s| \implicaLuego s[i]_{i} = 0 \wedge  s[i]_{j} = s[j]_{i} \wedge s[i]_{j} \geq 0)
+}
+
+\pred{esCamino}{\In s: \TLista{\ent}, \In n: \ent, \In m: \ent, \In A: \TLista{\TLista{\ent}}}{
+|s| \geq 2 \wedge s[0] = n \wedge s[|s|-1] = m \wedge \\(\forall i: \ent)(0 \leq i < |s| \implicaLuego 0 \leq s[i] < |A|) \wedge \\ (\forall j: \ent)(0 \leq j < |s| - 1 \implicaLuego A[s[j]]_{s[j+1]} > 0)
 }
 
 \subsection{grandesCiudades}
@@ -73,26 +89,41 @@
 \subsection{hayCamino}
 
 \begin{proc}{hayCamino}{\In distancias : \TLista{\TLista{\ent}}, \In desde : \ent, \In hasta : \ent}{\bool}
-	\requiere{0 \leq desde < |distancias| \land 0 \leq hasta < |distancias|}
-	\asegura{res = \True \iff existeCamino(distancia, desde, hasta)}
+	\requiere{matrizCuadrada(distancias) \wedge matrizPositivaSimetricaConCerosDiagonal(distancias) \wedge \\ 0 \leq desde < |distancias| \land 0 \leq hasta < |distancias| \wedge desde \neq hasta}
+	\asegura{res = \True \longleftrightarrow (\exists c: \TLista{\ent})(esCamino(c, desde, hasta, distancias))}
 \end{proc}
 
-\pred{existeCamino}{\In distancias : \TLista{\TLista{\ent}}, \In desde : \ent, \In hasta : \ent}{\existe[unalinea]{camino}{\TLista{\ent}}{|camino| \geq 2 \land camino[0] = desde \land camino[|camino| - 1] = hasta \land 
-          (\forall i: \ent)(0 \leq i < |camino| - 1 \rightarrow distancias[camino[i]][camino[i+1]] > 0)}}
 
 \subsection{cantidadCaminosNSaltos}
 
-\begin{proc}{cantidadCaminosNSaltos}{\In conexion : \TLista{\TLista{\ent}}, \In n : \ent}{\TLista{\ent}}
-	\requiere{n \geq 1 \land conexion = C_0}
-	\asegura{conexion = {C_0}^n}
+\begin{proc}{cantidadCaminosNSaltos}{\Inout conexion: \TLista{\TLista{\ent}}, \In n: \ent}{}
+	\requiere{n \geq 1 \wedge matrizCuadrada(conexion) \wedge \\ matrizPositivaSimetricaConCerosDiagonal(conexion) \wedge unosYceros(conexion) \wedge conexion = C_0}
+	\asegura{(\forall i: \ent)(0 \leq i < \longitud{C_0} \implicaLuego (\forall j: \ent)(0 \leq j < \longitud{C_0} \implicaLuego (\forall k: \ent)(0 \leq k < \longitud{C_0} \implicaLuego conexion[i][j] = \prod_{i=0}^{n -1} {C_0}[i][j]*{\sum_{i=0}^{longitud{C_0} -1} ({C_0}[i][k]*{C_0}[j][k]))) \yLuego longitud{C_0[i]} = longitud{conexion[i]})}}
+        \asegura{longitud{conexion} = longitud{C_0}}
 \end{proc}
+
+\begin{proc}{cantidadCaminosNSaltos}{\Inout conexion: \TLista{\TLista{\ent}}, \In n: \ent}{}
+	\requiere{n \geq 1 \wedge matrizCuadrada(conexion) \wedge \\ matrizPositivaSimetricaConCerosDiagonal(conexion) \wedge unosYceros(conexion) \wedge conexion = C_0}
+\asegura{(\exists s: \TLista{\TLista{\TLista{\ent}}})(|s| = n \wedge  s[0] = C_0 \wedge \\
+(\forall i: \ent)(0 \leq i < n \implicaLuego matrizCuadrada(s[i]) \wedge matrizPositivaSimetricaConCerosDiagonal(s[i])) \wedge \\
+(\forall j: \ent)(1 \leq j < n \implicaLuego esMultiplicacionMatricialDe(s[j], s[j-1], C_0)) \wedge conexion = s[n-1])}
+\end{proc}
+
+\pred{unosYceros}{\In s: \TLista{\TLista{\ent}}}{
+(\forall i: \ent)(\forall j: \ent)(0 \leq i < j < |s| \implicaLuego s[i]_{j} = 0 \vee s[i]_{j} = 1)
+}
+
+\pred{esMultiplicacionMatricialDe}{\In A: \TLista{\TLista{\ent}}, \In B: \TLista{\TLista{\ent}}, \In C: \TLista{\TLista{\ent}}}{
+(\forall i: \ent)(\forall j: \ent)(0 \leq i \leq j < |A| \implicaLuego A[i]_{j} = \sum_{k=0}^{|A|-1}{B[i]_{k}*C[k]_{j}})
+}
 
 \subsection{caminoMínimo}
 
-\begin{proc}{caminoMinimo}{\In origen : \nat, \In destino : \ent, \In distancias : \TLista{\TLista{\ent}}}{\TLista{\ent}}
-	\requiere{0 \leq origen < |distancias| \land 0 \leq destino < |distancias|}
-	\asegura{(res = \lvacia \iff ¬existeCamino(distancias, origen, destino) \lor origen = destino) \land (res \neq \lvacia \implies (\forall camino : \TLista{\ent})(camino[0] = origen \land camino[|camino| - 1] = destino \land sumaDistancias(res, distancias) \leq sumaDistancias(camino, distancias)))}
-    \aux{sumaDistancia}{\In camino : \TLista{\ent}, \In distancias : \TLista{\TLista{\ent}}}{\ent}{\sum_{i=0}^{|camino|-2} distancias[camino[i]][camino[i+1]]}
+\begin{proc}{caminoMinimo}{\In origen: \ent, \In destino: \ent, \In distancias: \TLista{\TLista{\ent}}}{\TLista{\ent}}
+	\requiere{matrizCuadrada(distancias) \wedge matrizPositivaSimetricaConCerosDiagonal(distancias) \wedge \\ 0 \leq origen < |distancias| \land 0 \leq destino < |distancias| \wedge origen \neq destino}
+	\asegura{(|res| = 0 \longleftrightarrow \neg(\exists s: \TLista{\ent})(esCamino(s, origen, hasta, distancias))) \vee \\ (esCamino(res, origen, hasta, distancias) \wedge (\forall c: \TLista{\ent})(esCamino(c, origen, destino, distancias) \longrightarrow \\
+ distanciaTotal(res, distancias) \leq distanciaTotal(c, distancias)))}
+    \aux{distanciaTotal}{\In s: \TLista{\ent}, \In A: \TLista{\TLista{\ent}}}{\ent}{\sum_{i=0}^{|c|-2} A[c[i]]_{c[i+1]}}
 \end{proc}
 
 
@@ -274,10 +305,137 @@ $P \equiv A \wedge B \wedge C \implies A \wedge B \wedge C \equiv True \wedge Tr
 El programa es correcto con respecto a su especificación.
 
 \subsection{Demostrar que el valor devuelto es mayor a 50.000.}
-Para demostrar que el valor devuelto es mayor a 50.000, cambiamos la Postcondición Q del programa acordemente y vemos si el programa sigue siendo correcto con respecto a su especificación.
+Informalmente, a partir de la precondición del programa se puede asumir que existe algún elemento de la secuencia de entrada con más de 50.000 habitantes. Como el ciclo, mediante el paso de las iteraciones, suma los habitantes de cada ciudad de la entrada, no hay ciudades con un numero negativo de habitantes y el ciclo finaliza, se puede concluir que la suma total de habitantes dará como resultado al menos 50.000, cumpliendo así lo pedido. \par
+Formalmente, para demostrar que el valor devuelto es mayor a 50.000, consideramos la siguiente postcondición Q y vemos si el programa sigue siendo correcto con respecto a su especificación.
 
-Consideramos $P, B, Pc, f_{v}$ igual que en el punto anterior, y \\ \par
+Tomando $P, B, Pc, f_{v}$ igual que en el punto anterior, y \\ \par
 $Q \equiv Qc \equiv res = \sum_{j=0}^{|ciudades|-1} ciudades[j].habitantes \wedge res > 50000$ \\ \par
 $A \equiv (\exists l: \ent)(0 \leq l < |ciudades| \yLuego ciudades[l].habitantes > 50000)$\\ \par
-$I \equiv 0 \leq i \leq |ciudades| \yLuego res = \sum_{j=0}^{i-1} ciudades[j].habitantes \wedge A$
+$B \equiv (\forall k: \ent)(0 \leq k < |ciudades| \implicaLuego ciudades[k].habitantes \geq 0)$\\ \par
+$I \equiv 0 \leq i \leq |ciudades| \yLuego res = \sum_{j=0}^{i-1} ciudades[j].habitantes \wedge A \wedge B$\\ \par
+Para demostrar la correctitud del programa basta ver que son válidas las siguientes triplas de Hoare: \par
+\vspace{5px}
+
+\begin{center}
+   ${ \{Pc\} S_{3};S_{4} \{Qc \equiv{Q}\} \; y \; \{P\} S_{1};S_{2} \{Pc\}}$
+\vspace{5px} 
+\end{center}
+
+
+\subsubsection{$Pc \implies wp(S_{3};S_{4},Qc)$ (Teorema del Invariante y Terminación)}
+
+\paragraph{$Pc \implies I$}
+$ Pc \equiv {res = 0 \; \wedge i = 0 \; \wedge A \wedge B \wedge C} \implies 0 \leq 0  \leq |ciudades| \yLuego 0 = \sum_{j=0}^{-1} ciudades[j].habitantes \wedge A \wedge B$ \equiv \par 
+{\center $ 0 \leq |ciudades| \yLuego 0 = 0 \wedge True \wedge True\equiv$ \\
+\vspace{5px}
+$ True \; \yLuego \; True \equiv$ \\
+\vspace{5px}
+$True$ \\
+\vspace{5px}
+$Pc \implies I\par$}
+
+\paragraph{$I \wedge B \implies wp(S_{3};S_{4}, I)$}
+$wp(S_{3};S_{4}, I) \equiv wp(res = res + ciudades.[i].habitantes, \; wp(i = i + 1, I))$ \equiv \par
+\vspace{5px}
+$wp(res = res + ciudades.[i].habitantes, \; def(i+1) \yLuego I_{i+1}^{i})$ \equiv \par
+\vspace{5px}
+$wp(res = res + ciudades.[i].habitantes, \; True \yLuego 0 \leq i + 1 \leq |ciudades| \yLuego res = \sum_{j=0}^{i}{ciudades[j].habitantes} \wedge A \wedge B)$ \equiv \par
+\vspace{5px}
+$wp(res = res + ciudades.[i].habitantes, \; \underbrace{-1 \leq i \leq |ciudades| - 1 \yLuego res = \sum_{j=0}^{i}{ciudades[j].habitantes} \wedge A \wedge B}_{I^{'}})$ \equiv \par
+\vspace{5px}
+$def(res + ciudades.[i].habitantes) \yLuego (I^{'})_{res + ciudades.[i].habitantes}^{res}$ \equiv \par
+\vspace{5px}
+$0 \leq i < |ciudades| \; \yLuego -1 \leq i \leq |ciudades| - 1 \yLuego res + ciudades.[i].habitantes = \sum_{j=0}^{i}{ciudades[j].habitantes} \wedge A \wedge B$ \equiv \par
+\vspace{5px}
+$0 \leq i < |ciudades| \yLuego res = \sum_{j=0}^{i-1}{ciudades[j].habitantes} \wedge A \wedge B$ \par
+\vspace{20px}
+
+$I \wedge B \equiv 0 \leq i \leq |ciudades| \yLuego res = \sum_{j=0}^{i-1} ciudades[j].habitantes \wedge A \wedge B \wedge i < |ciudades| \equiv$\par
+
+\begin{center}
+$0 \leq i < |ciudades| \yLuego res = \sum_{j=0}^{i-1} ciudades[j].habitantes \wedge A \wedge B \implies  $ \par
+\vspace{5px}
+$ 0 \leq i < |ciudades| \yLuego \sum_{j=0}^{i-1} ciudades[j].habitantes = \sum_{j=0}^{i-1} ciudades[j].habitantes \wedge A \wedge B$  \equiv \par
+\vspace{5px}
+$True \yLuego True \wedge True \wedge True$ \equiv \par
+\vspace{5px}
+$True$\par
+\vspace{5px}
+    $I \wedge B \implies wp(S_{3};S_{4}, I)$
+\end{center}
+
+\paragraph{$I \wedge \neg B \implies Qc$}
+$I \wedge \neg B \equiv 0 \leq i \leq |ciudades| \yLuego res = \sum_{j=0}^{i-1} ciudades[j].habitantes \wedge A \wedge B \wedge i \geq |ciudades| $ \equiv \par
+
+\begin{center}
+  $i = |ciudades| \yLuego res = \sum_{j=0}^{i-1} ciudades[j].habitantes \wedge A \wedge B$ \equiv \par
+\vspace{5px}  
+$res = \sum_{j=0}^{|ciudades|-1} ciudades[j].habitantes \wedge A \wedge B$ \implies \par
+\vspace{5px} 
+$\sum_{j=0}^{|ciudades|-1} ciudades[j].habitantes = \sum_{j=0}^{|ciudades|-1} ciudades[j].habitantes \wedge \sum_{j=0}^{|ciudades|-1} ciudades[j].habitantes > 50000$  \par
+\vspace{5px}
+\equiv \; $True \yLuego \; True$ \equiv \par
+\vspace{5px}
+$True$\par
+\vspace{5px}
+$I \wedge \neg B \implies Qc$
+\end{center}
+
+\paragraph{$I \wedge  B \wedge v_{0}=f_{v} \implies wp(S_{3};S_{4}, f_{v} < v_{0})$}
+
+$wp(S_{3};S_{4}, f_{v} < v_{0}) \equiv wp(res = res + ciudades[i].habitantes, wp(i = i + 1, |ciudades| - i < v_{0}))$ \equiv \par
+\vspace{5px}
+$wp(res = res + ciudades[i].habitantes, def(i+1) \yLuego (|ciudades| - i < v_{0})_{i+1}^{i}) $ \equiv \par
+\vspace{5px}
+$wp(res = res + ciudades[i].habitantes, True \yLuego |ciudades| - i - 1 < v_{0})$ \equiv \par
+\vspace{5px}
+$def(res + ciudades[i].habitante) \yLuego (|ciudades| - i - 1 < v_{0})_{res + ciudades[i].habitante}^{res}$ \equiv \par
+\vspace{5px}
+$0 \leq i < |ciudades| \yLuego |ciudades| - i - 1 < v_{0}$ \equiv \par
+\vspace{20px}
+$I \wedge  B \wedge v_{0}=f_{v} \equiv 0 \leq i \leq |ciudades| \yLuego res = \sum_{j=0}^{i-1} ciudades[j].habitantes \wedge A \wedge B \wedge i < |ciudades| \wedge v_{0}=|ciudades| - i$ \par
+\begin{center}
+    \equiv \; $0 \leq i < |ciudades| \yLuego res = \sum_{j=0}^{i-1} ciudades[j].habitantes \wedge A \wedge B \wedge v_{0}=|ciudades| - i$ \implies \par
+    \vspace{5px}
+    $0 \leq i < |ciudades| \yLuego |ciudades| - i - 1 < |ciudades| - i$ \equiv \par
+    \vspace{5px}
+    $True \yLuego True$ \equiv \par
+    \vspace{5px}
+    $True$ \par
+    \vspace{5px}
+    $I \wedge  B \wedge v_{0}=f_{v} \implies wp(S_{3};S_{4}, f_{v} < v_{0})$
+\end{center}
+
+
+
+\paragraph{$I \wedge f_{v} \leq 0 \implies \neg B$}
+$I \wedge f_{v} \leq 0 \equiv 0 \leq i \leq |ciudades| \yLuego res = \sum_{j=0}^{i-1} ciudades[j].habitantes \wedge A \wedge B \wedge |ciudades| - i \leq 0$ \equiv \par
+\begin{center}
+    $0 \leq i \leq |ciudades| \yLuego res = \sum_{j=0}^{i-1} ciudades[j].habitantes \wedge A \wedge B \wedge |ciudades| \leq i$ \equiv \par
+    \vspace{5px}
+    $i = |ciudades| \yLuego res = \sum_{j=0}^{i-1} ciudades[j].habitantes \wedge A \wedge B $ \implies \par
+    \vspace{5px}
+    $i \geq |ciudades|$ \equiv \par
+    \vspace{5px}
+    $True$ \par
+    \vspace{5px}
+    $I \wedge f_{v} \leq 0 \implies \neg B$
+\end{center}
+
+\subsubsection{$P \implies wp(S_{1};S_{2}, Pc)$}
+$wp(S_{1};S_{2}, Pc) \equiv wp(res = 0, wp(i = 0, Pc)) \equiv wp(res = 0, def(0) \yLuego Pc_{0}^{i})$ \equiv \par
+\vspace{5px}
+$wp(res = 0, True \yLuego res = 0 \wedge 0 = 0 \wedge A \wedge B \wedge C) $ \equiv \par
+\vspace{5px}
+$def(0) \yLuego (res = 0 \wedge True \wedge A \wedge B \wedge C)_{0}^{res} $ \equiv \par
+\vspace{5px}
+$True \yLuego 0 = 0 \wedge A \wedge B \wedge C \equiv True \wedge A \wedge B \wedge C \equiv  A \wedge B \wedge C $ \ \par
+\vspace{20px}
+$P \equiv A \wedge B \wedge C \implies A \wedge B \wedge C \equiv True \wedge True \wedge True \equiv True$ \par
+\vspace{5px}
+\begin{center}
+    $P \implies wp(S_{1};S_{2}, Pc)$
+\end{center}
+El programa es correcto con respecto a su especificación.
+
 \end{document}

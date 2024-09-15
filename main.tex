@@ -34,8 +34,10 @@
 
 \maketitle
 
-\section{Especificación}
 
+\section{Especificación}
+\setcounter{subsection}{-1}
+\subsection{Predicados recurrentes}
 \pred{habitantesPositivos}{\In s: \TLista{Ciudad}}{
 (\forall j: \ent)(0 \leq j < |s| \implicaLuego s[j].habitantes \geq 0)
 }

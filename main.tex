@@ -52,23 +52,23 @@
 }
 
 \pred{matrizPositivaSimetricaConCerosDiagonal}{\In s: \TLista{\TLista{\ent}}}{
-(\forall i: \ent)(\forall j: \ent)(0 \leq i < j < |s| \implicaLuego s[i]_{i} = 0 \wedge  s[i]_{j} = s[j]_{i} \wedge s[i]_{j} \geq 0)
+(\forall i: \ent)(\forall j: \ent)(0 \leq i < j < |s| \implicaLuego s[i][i] = 0 \wedge  s[i][j] = s[j][i] \wedge s[i][j] \geq 0)
 }
 
-\pred{esCamino}{\In s: \TLista{\ent}, \In n: \ent, \In m: \ent, \In A: \TLista{\TLista{\ent}}}{
-|s| \geq 2 \wedge s[0] = n \wedge s[|s|-1] = m \wedge \\(\forall i: \ent)(0 \leq i < |s| \implicaLuego 0 \leq s[i] < |A|) \wedge \\ (\forall j: \ent)(0 \leq j < |s| - 1 \implicaLuego A[s[j]]_{s[j+1]} > 0)
+\pred{esCamino}{\In camino: \TLista{\ent}, \In desde: \ent, \In hasta: \ent, \In A: \TLista{\TLista{\ent}}}{
+|camino| \geq 2 \yLuego camino[0] = desde \wedge camino[|camino|-1] = hasta \wedge \\(\forall i: \ent)(0 \leq i < |camino| \implicaLuego 0 \leq camino[i] < |A|) \wedge \\ (\forall j: \ent)(0 \leq j < |camino| - 1 \implicaLuego A[camino[j]][camino[j+1]] > 0)
 }
 
 \subsection{grandesCiudades}
 
 \begin{proc}{grandesCiudades}{\In ciudades: \TLista{Ciudad}}{\TLista{Ciudad}}
 	\requiere{habitantesPositivos(ciudades) \wedge noCiudadesRepetidas(ciudades)}
-	\asegura{\longitud{res} = CantidadCiudadesMayor50000(ciudades) \; \wedge \\
+	\asegura{\longitud{res} = cantidadCiudadesMayor50000(ciudades) \; \wedge noCiudadesRepetidas(res) \wedge\\
           (\forall i: \ent)(0 \leq i < \longitud{res} \implicaLuego (\exists j: \ent)(0 \leq j < \longitud{ciudades} \yLuego (res[i] = ciudades[j] \wedge ciudades[j].habitantes > 50000)))}
 \end{proc}
 
 
-\aux{CantidadCiudadesMayor50000}{\In s: \TLista{Ciudad}}{\ent} \\ {$\sum_{i=0}^{|s|-1} \IfThenElse{s[i].habitantes > 50000}{1}{0}$;}
+\aux{cantidadCiudadesMayor50000}{\In s: \TLista{Ciudad}}{\ent} \\ {$\sum_{i=0}^{|s|-1} \IfThenElse{s[i].habitantes > 50000}{1}{0}$;}
 
 \subsection{sumaDeHabitantes}
 
@@ -83,13 +83,13 @@
 
 \pred{mismosNombres}{\In s: \TLista{Ciudad}, \In t: \TLista{Ciudad}}{(\forall i: \ent) (0 \leq i < |s| \implicaLuego (\exists j: \ent) (0 \leq j < |t| \yLuego s[i].nombre = t[j].nombre))}
 
-\pred{siCoincidenNombresSumoHabitantes}{\In s: \TLista{Ciudad}, \In t: \TLista{Ciudad}, \In r: \TLista{Ciudad}, \In i: \ent, \In j: \ent, \In k: \ent}{(s[i].nombre = t[j].nombre \; \wedge \;  s[i].nombre = r[k].nombre) \longrightarrow  s[i].habitantes = t[j].habitantes + r[k].habitantes}
+\pred{siCoincidenNombresSumoHabitantes}{\In res: \TLista{Ciudad}, \In men: \TLista{Ciudad}, \In may: \TLista{Ciudad}, \In i: \ent, \In j: \ent, \In k: \ent}{(res[i].nombre = men[j].nombre \; \wedge \;  res[i].nombre = may[k].nombre) \; \wedge \\ res[i].habitantes = men[j].habitantes + may[k].habitantes}
 
 
 \subsection{hayCamino}
 
 \begin{proc}{hayCamino}{\In distancias : \TLista{\TLista{\ent}}, \In desde : \ent, \In hasta : \ent}{\bool}
-	\requiere{matrizCuadrada(distancias) \wedge matrizPositivaSimetricaConCerosDiagonal(distancias) \wedge \\ 0 \leq desde < |distancias| \land 0 \leq hasta < |distancias| \wedge desde \neq hasta}
+	\requiere{matrizCuadrada(distancias) \wedge matrizPositivaSimetricaConCerosDiagonal(distancias) \wedge \\ 0 \leq desde < |distancias| \land 0 \leq hasta < |distancias|}
 	\asegura{res = \True \longleftrightarrow (\exists c: \TLista{\ent})(esCamino(c, desde, hasta, distancias))}
 \end{proc}
 
@@ -98,31 +98,31 @@
 
 \begin{proc}{cantidadCaminosNSaltos}{\Inout conexion: \TLista{\TLista{\ent}}, \In n: \ent}{}
 	\requiere{n \geq 1 \wedge matrizCuadrada(conexion) \wedge \\ matrizPositivaSimetricaConCerosDiagonal(conexion) \wedge unosYceros(conexion) \wedge conexion = C_0}
-\asegura{(\exists s: \TLista{\TLista{\TLista{\ent}}})(|s| = n \wedge  s[0] = C_0 \wedge \\
+\asegura{(\exists s: \TLista{\TLista{\TLista{\ent}}})(|s| = n \yLuego  s[0] = C_0 \wedge \\
 (\forall i: \ent)(0 \leq i < n \implicaLuego matrizCuadrada(s[i]) \wedge matrizPositivaSimetrica(s[i])) \wedge \\
 (\forall j: \ent)(1 \leq j < n \implicaLuego esMultiplicacionMatricialDe(s[j], s[j-1], C_0)) \wedge conexion = s[n-1])}
 \end{proc}
 
 \pred{unosYceros}{\In s: \TLista{\TLista{\ent}}}{
-(\forall i: \ent)(\forall j: \ent)(0 \leq i < j < |s| \implicaLuego s[i]_{j} = 0 \vee s[i]_{j} = 1)
+(\forall i: \ent)(\forall j: \ent)(0 \leq i < j < |s| \implicaLuego s[i][j] = 0 \vee s[i][j] = 1)
 }
 
 \pred{matrizPositivaSimetrica}{\In s: \TLista{\TLista{\ent}}}{
-(\forall i: \ent)(\forall j: \ent)(0 \leq i < j < |s| \implicaLuego s[i]_{j} = s[j]_{i} \wedge s[i]_{j} \geq 0)
+(\forall i: \ent)(\forall j: \ent)(0 \leq i < j < |s| \implicaLuego s[i][j] = s[j][i] \wedge s[i][j] \geq 0)
 }
 
 
 \pred{esMultiplicacionMatricialDe}{\In A: \TLista{\TLista{\ent}}, \In B: \TLista{\TLista{\ent}}, \In C: \TLista{\TLista{\ent}}}{
-(\forall i: \ent)(\forall j: \ent)(0 \leq i \leq j < |A| \implicaLuego A[i]_{j} = \sum_{k=0}^{|A|-1}{B[i]_{k}*C[k]_{j}})
+(\forall i: \ent)(\forall j: \ent)(0 \leq i \leq j < |A| \implicaLuego A[i][j] = \sum_{k=0}^{|A|-1}{B[i][k]*C[k][j]})
 }
 
 \subsection{caminoMínimo}
 
 \begin{proc}{caminoMinimo}{\In origen: \ent, \In destino: \ent, \In distancias: \TLista{\TLista{\ent}}}{\TLista{\ent}}
-	\requiere{matrizCuadrada(distancias) \wedge matrizPositivaSimetricaConCerosDiagonal(distancias) \wedge \\ 0 \leq origen < |distancias| \land 0 \leq destino < |distancias| \wedge origen \neq destino}
-	\asegura{(|res| = 0 \longleftrightarrow \neg(\exists s: \TLista{\ent})(esCamino(s, origen, hasta, distancias))) \vee \\ (esCamino(res, origen, hasta, distancias) \wedge (\forall c: \TLista{\ent})(esCamino(c, origen, destino, distancias) \longrightarrow \\
+	\requiere{matrizCuadrada(distancias) \wedge matrizPositivaSimetricaConCerosDiagonal(distancias) \wedge \\ 0 \leq origen < |distancias| \land 0 \leq destino < |distancias|}
+	\asegura{(|res| = 0 \wedge \neg(\exists s: \TLista{\ent})(esCamino(s, origen, hasta, distancias))) \vee \\ (esCamino(res, origen, hasta, distancias) \wedge (\forall c: \TLista{\ent})(esCamino(c, origen, destino, distancias) \longrightarrow \\
  distanciaTotal(res, distancias) \leq distanciaTotal(c, distancias)))}
-    \aux{distanciaTotal}{\In s: \TLista{\ent}, \In A: \TLista{\TLista{\ent}}}{\ent}{\sum_{i=0}^{|c|-2} A[c[i]]_{c[i+1]}}
+    \aux{distanciaTotal}{\In s: \TLista{\ent}, \In A: \TLista{\TLista{\ent}}}{\ent}{\sum_{i=0}^{|c|-2} A[c[i]][c[i+1]]}
 \end{proc}
 
 
@@ -180,7 +180,7 @@ Como la última instrucción del programa es el ciclo, podemos asumir que \par
 $Q \equiv Qc \equiv res = \sum_{j=0}^{|ciudades|-1} ciudades[j].habitantes$
 \\
 
-Para demostrar la correctitud del programa basta ver que son válidas las siguientes triplas de Hoare: \par
+Por corolario de la propiedad de monotonía de las WP, para demostrar la correctitud del programa basta ver que son válidas las siguientes triplas de Hoare: \par
 \vspace{5px}
 
 \begin{center}

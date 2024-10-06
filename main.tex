@@ -38,24 +38,24 @@
 \section{Especificación}
 \setcounter{subsection}{-1}
 \subsection{Predicados recurrentes}
-\pred{habitantesPositivos}{\In s: \TLista{Ciudad}}{
+\pred{habitantesPositivos}{s: \TLista{Ciudad}}{
 (\forall j: \ent)(0 \leq j < |s| \implicaLuego s[j].habitantes \geq 0)
 }
 
-\pred{noCiudadesRepetidas}{\In s: \TLista{Ciudad}}{
+\pred{noCiudadesRepetidas}{s: \TLista{Ciudad}}{
 (\forall i: \ent)(\forall j: \ent)(0 \leq i < j < |s| \implicaLuego s[i].nombre \neq s[j].nombre)
 }
 
 
-\pred{matrizCuadrada}{\In s: \TLista{\TLista{\ent}}}{
+\pred{matrizCuadrada}{s: \TLista{\TLista{\ent}}}{
 (\forall i: \ent)(0 \leq i < |s| \implicaLuego |s| = |s[i]|)
 }
 
-\pred{matrizPositivaSimetricaConCerosDiagonal}{\In s: \TLista{\TLista{\ent}}}{
+\pred{matrizPositivaSimetricaConCerosDiagonal}{s: \TLista{\TLista{\ent}}}{
 (\forall i: \ent)(\forall j: \ent)(0 \leq i < j < |s| \implicaLuego s[i][i] = 0 \wedge  s[i][j] = s[j][i] \wedge s[i][j] \geq 0)
 }
 
-\pred{esCamino}{\In camino: \TLista{\ent}, \In desde: \ent, \In hasta: \ent, \In A: \TLista{\TLista{\ent}}}{
+\pred{esCamino}{camino: \TLista{\ent}, desde: \ent,  hasta: \ent, A: \TLista{\TLista{\ent}}}{
 |camino| \geq 2 \yLuego camino[0] = desde \wedge camino[|camino|-1] = hasta \wedge \\(\forall i: \ent)(0 \leq i < |camino| \implicaLuego 0 \leq camino[i] < |A|) \wedge \\ (\forall j: \ent)(0 \leq j < |camino| - 1 \implicaLuego A[camino[j]][camino[j+1]] > 0)
 }
 
@@ -81,9 +81,9 @@
           (\forall i: \ent)(0 \leq i < |res| \implicaLuego (\exists j: \ent)(\exists k: \ent)(0 \leq j < k < |menoresDeCiudad| \; \yLuego \\ siCoincidenNombresSumoHabitantes(res, menoresDeCiudades, mayoresDeCiudades, i, j, k)))}
 \end{proc}
 
-\pred{mismosNombres}{\In s: \TLista{Ciudad}, \In t: \TLista{Ciudad}}{(\forall i: \ent) (0 \leq i < |s| \implicaLuego (\exists j: \ent) (0 \leq j < |t| \yLuego s[i].nombre = t[j].nombre))}
+\pred{mismosNombres}{s: \TLista{Ciudad}, t: \TLista{Ciudad}}{(\forall i: \ent) (0 \leq i < |s| \implicaLuego (\exists j: \ent) (0 \leq j < |t| \yLuego s[i].nombre = t[j].nombre))}
 
-\pred{siCoincidenNombresSumoHabitantes}{\In res: \TLista{Ciudad}, \In men: \TLista{Ciudad}, \In may: \TLista{Ciudad}, \In i: \ent, \In j: \ent, \In k: \ent}{(res[i].nombre = men[j].nombre \; \wedge \;  res[i].nombre = may[k].nombre) \; \wedge \\ res[i].habitantes = men[j].habitantes + may[k].habitantes}
+\pred{siCoincidenNombresSumoHabitantes}{res: \TLista{Ciudad}, men: \TLista{Ciudad}, may: \TLista{Ciudad}, i: \ent,  j: \ent,  k: \ent}{(res[i].nombre = men[j].nombre \; \wedge \;  res[i].nombre = may[k].nombre) \; \wedge \\ res[i].habitantes = men[j].habitantes + may[k].habitantes}
 
 
 \subsection{hayCamino}
@@ -103,16 +103,16 @@
 (\forall j: \ent)(1 \leq j < n \implicaLuego esMultiplicacionMatricialDe(s[j], s[j-1], C_0)) \wedge conexion = s[n-1])}
 \end{proc}
 
-\pred{unosYceros}{\In s: \TLista{\TLista{\ent}}}{
+\pred{unosYceros}{s: \TLista{\TLista{\ent}}}{
 (\forall i: \ent)(\forall j: \ent)(0 \leq i < j < |s| \implicaLuego s[i][j] = 0 \vee s[i][j] = 1)
 }
 
-\pred{matrizPositivaSimetrica}{\In s: \TLista{\TLista{\ent}}}{
+\pred{matrizPositivaSimetrica}{s: \TLista{\TLista{\ent}}}{
 (\forall i: \ent)(\forall j: \ent)(0 \leq i < j < |s| \implicaLuego s[i][j] = s[j][i] \wedge s[i][j] \geq 0)
 }
 
 
-\pred{esMultiplicacionMatricialDe}{\In A: \TLista{\TLista{\ent}}, \In B: \TLista{\TLista{\ent}}, \In C: \TLista{\TLista{\ent}}}{
+\pred{esMultiplicacionMatricialDe}{A: \TLista{\TLista{\ent}}, B: \TLista{\TLista{\ent}}, C: \TLista{\TLista{\ent}}}{
 (\forall i: \ent)(\forall j: \ent)(0 \leq i \leq j < |A| \implicaLuego A[i][j] = \sum_{k=0}^{|A|-1}{B[i][k]*C[k][j]})
 }
 
